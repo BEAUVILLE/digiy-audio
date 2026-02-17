@@ -1,0 +1,166 @@
+# 🦅 DIGIY AUDIO - La Révolution de l'Écoute
+
+**DIGIY AUDIO** est une application web réactive 100% gratuite pour écouter vos articles, avec traduction automatique en plusieurs langues (Français, Anglais, Wolof, Diola, Mandingue).
+
+## ✨ Features PRO
+
+✅ **Lecteur d'articles** - Colle ou écris tes articles  
+✅ **Text-to-Speech (TTS)** - Écoute avec Google Web Speech API (gratuit)  
+✅ **Traduction multi-langue** - FR, EN, Wolof, Diola, Mandingue  
+✅ **Contrôle vitesse** - 0.5x à 2x (parfait pour l'apprentissage)  
+✅ **Taille police ajustable** - 12px à 32px  
+✅ **Mode sombre/clair** - Protection des yeux  
+✅ **Stockage local** - Tes articles restent sur ton téléphone  
+✅ **Zéro connexion Internet** - TTS fonctionne offline  
+✅ **Interface responsive** - Mobile, tablet, desktop  
+✅ **Design DIGIY** - L'aigle royal dans chaque détail  
+
+---
+
+## 🚀 DÉPLOIEMENT RAPIDO (3 étapes)
+
+### 1️⃣ **Créer le repo GitHub**
+
+```bash
+# Sur ta machine
+git clone https://github.com/TON_USERNAME/digiy-audio.git
+cd digiy-audio
+
+# Copie les fichiers dans le dossier
+# (package.json, App.jsx, vite.config.js, etc.)
+
+git add .
+git commit -m "🚀 Init DIGIY AUDIO - The Royal Eagle Takes Flight"
+git push origin main
+```
+
+### 2️⃣ **Déployer sur Vercel (gratuit)**
+
+```bash
+# Installe Vercel CLI
+npm install -g vercel
+
+# Deploy
+vercel
+
+# Relie à ton repo GitHub automatiquement
+```
+
+**OU** (plus facile):
+- Va sur [vercel.com](https://vercel.com)
+- Clique "New Project"
+- Sélectionne ton repo GitHub `digiy-audio`
+- Deploy en 1 clic! 🎯
+
+### 3️⃣ **C'est prêt!**
+
+Ton app est live sur:
+```
+https://digiy-audio.vercel.app
+```
+
+---
+
+## 📁 STRUCTURE DU PROJET
+
+```
+digiy-audio/
+├── src/
+│   ├── App.jsx              # Composant principal
+│   ├── main.jsx             # Entry point
+│   ├── index.css            # Styles globaux
+│   └── App.css              # Styles app (si needed)
+├── public/
+│   └── index.html           # HTML template
+├── package.json             # Dependencies
+├── vite.config.js           # Config Vite
+├── tailwind.config.js       # Config Tailwind
+├── postcss.config.js        # Config PostCSS
+├── .gitignore
+├── README.md                # Ce fichier
+└── vercel.json              # Config Vercel (optionnel)
+```
+
+---
+
+## 💻 SETUP LOCAL (pour dev)
+
+```bash
+# 1. Clone
+git clone https://github.com/TOU_USERNAME/digiy-audio.git
+cd digiy-audio
+
+# 2. Install deps
+npm install
+
+# 3. Dev server
+npm run dev
+
+# 4. Ouvre http://localhost:5173
+
+# 5. Build pour prod
+npm run build
+```
+
+---
+
+## 🎯 ROADMAP FUTURE (V2, V3...)
+
+- 📱 App mobile native (React Native)
+- 🎙️ Podcasts intégrés
+- 📚 Audiobooks
+- 🔗 Intégration "le rail de l'infini" (DIGIY ECOSYSTEM)
+- 💾 Sync cloud (Supabase/Firebase)
+- 👥 Partage d'articles
+- 📊 Statistiques de lecture/écoute
+
+---
+
+## 🔐 TECHNOLOGIES UTILISÉES
+
+| Tech | Raison |
+|------|--------|
+| **React 18** | Interface réactive ultra-rapide |
+| **Vite** | Build blazingly fast |
+| **Tailwind CSS** | Design pro en minutes |
+| **Google Web Speech API** | TTS gratuit, intégré navigateur |
+| **MyMemory API** | Traduction gratuite, no auth |
+| **localStorage** | Stockage client, offline-first |
+
+---
+
+## 🌍 LANGUES SUPPORTÉES
+
+- 🇫🇷 Français
+- 🇬🇧 English
+- 🇸🇳 Wolof
+- 🇸🇳 Diola
+- 🇸🇳 Mandingue
+
+*(Plus de langues podem être ajoutées facilement)*
+
+---
+
+## 🤝 CONTRIBUTION
+
+Des idées? Des bugs? Push un PR! 🚀
+
+---
+
+## 📝 LICENSE
+
+MIT - Libre d'utilisation commerciale (DIGIY STYLE)
+
+---
+
+## 🦅 CRÉDITS
+
+**Créée par:** DIGIY (Founder & CEO DIGIYLYFE)  
+**Philosophie:** L'Afrique enracinée, connectée au monde ∞  
+**Mission:** 0% commission, 100% service
+
+---
+
+**GO GO GO FRÉROT! L'aigle royal décolle!** 🚀🔥
+
+*Made with ❤️ in Sarlat 🇫🇷 & Saly 🇸🇳*
