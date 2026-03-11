@@ -5,79 +5,117 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="DIGIY AUDIO - Écoute et traduis tes articles. L'Afrique enracinée, connectée au monde">
   <meta name="theme-color" content="#4f46e5">
-  
   <title>DIGIY AUDIO - Écoute intelligente d'articles</title>
-  
-  <!-- Favicon -->
+
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>🦅</text></svg>">
-  
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- App Root -->
+
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
     }
 
-    .floating-back {
-      position: fixed;
-      top: calc(env(safe-area-inset-top, 0px) + 14px);
-      left: calc(env(safe-area-inset-left, 0px) + 14px);
-      z-index: 99999;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px 16px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.22);
-      background: linear-gradient(135deg, #facc15 0%, #10b981 100%);
-      color: #0f172a;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 800;
-      line-height: 1;
-      box-shadow: 0 16px 40px rgba(0,0,0,.28);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      transition: transform .18s ease, box-shadow .18s ease;
+    html, body {
+      min-height: 100%;
     }
 
-    .floating-back:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 20px 46px rgba(0,0,0,.34);
-    }
-
-    .floating-back:active {
-      transform: translateY(0);
-    }
-
-    @media (max-width: 768px) {
-      .floating-back {
-        top: calc(env(safe-area-inset-top, 0px) + 10px);
-        left: calc(env(safe-area-inset-left, 0px) + 10px);
-        padding: 11px 14px;
-        font-size: 13px;
-      }
+    body{
+      font-family:'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
   </style>
 </head>
-
 <body>
-  <a class="floating-back" href="https://digiylyfe.com/" aria-label="Retour au site DIGIYLYFE">
-    ↩️ Retour site
-  </a>
-
   <div id="root"></div>
+
+  <script>
+    (function () {
+      const SITE_URL = "https://digiylyfe.com/";
+      const BTN_ID = "digiy-floating-back-site";
+
+      function applyStyles(btn) {
+        btn.setAttribute("style", `
+          position: fixed !important;
+          top: calc(env(safe-area-inset-top, 0px) + 12px) !important;
+          left: calc(env(safe-area-inset-left, 0px) + 12px) !important;
+          z-index: 2147483647 !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          gap: 8px !important;
+          padding: 12px 16px !important;
+          border-radius: 999px !important;
+          border: 1px solid rgba(255,255,255,.22) !important;
+          background: linear-gradient(135deg, #facc15 0%, #10b981 100%) !important;
+          color: #0f172a !important;
+          text-decoration: none !important;
+          font-family: Inter, system-ui, -apple-system, sans-serif !important;
+          font-size: 14px !important;
+          font-weight: 900 !important;
+          line-height: 1 !important;
+          box-shadow: 0 16px 40px rgba(0,0,0,.28) !important;
+          backdrop-filter: blur(10px) !important;
+          -webkit-backdrop-filter: blur(10px) !important;
+          opacity: 1 !important;
+          visibility: visible !important;
+          pointer-events: auto !important;
+          cursor: pointer !important;
+          user-select: none !important;
+          -webkit-user-select: none !important;
+          white-space: nowrap !important;
+        `);
+      }
+
+      function ensureButton() {
+        let btn = document.getElementById(BTN_ID);
+
+        if (!btn) {
+          btn = document.createElement("a");
+          btn.id = BTN_ID;
+          btn.href = SITE_URL;
+          btn.setAttribute("aria-label", "Retour au site DIGIYLYFE");
+          btn.textContent = "↩️ Retour site";
+          document.body.appendChild(btn);
+        }
+
+        applyStyles(btn);
+
+        if (btn.parentNode !== document.body) {
+          document.body.appendChild(btn);
+        }
+      }
+
+      function boot() {
+        ensureButton();
+
+        window.addEventListener("resize", ensureButton);
+        window.addEventListener("pageshow", ensureButton);
+        document.addEventListener("visibilitychange", ensureButton);
+
+        const observer = new MutationObserver(() => {
+          ensureButton();
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+          attributes: false
+        });
+
+        setInterval(ensureButton, 1500);
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", boot);
+      } else {
+        boot();
+      }
+    })();
+  </script>
+
   <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>
