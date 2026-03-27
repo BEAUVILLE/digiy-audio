@@ -490,6 +490,481 @@
     })();
   </script>
 
+ <!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+  <meta
+    name="description"
+    content="DIGIY AUDIO - Écoute et traduis tes articles. L'Afrique enracinée, connectée au monde"
+  />
+  <meta name="theme-color" content="#4f46e5" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="DIGIY AUDIO" />
+
+  <title>DIGIY AUDIO - Écoute intelligente d'articles</title>
+
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>🦅</text></svg>"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root{
+      --bg:#07111f;
+      --bg-soft:#0f172a;
+      --text:#e5eefb;
+      --muted:#9fb0c8;
+      --gold:#facc15;
+      --green:#10b981;
+      --violet:#4f46e5;
+      --line:rgba(255,255,255,.12);
+      --shadow:0 18px 48px rgba(0,0,0,.28);
+      --safe-top:env(safe-area-inset-top, 0px);
+      --safe-right:env(safe-area-inset-right, 0px);
+      --safe-bottom:env(safe-area-inset-bottom, 0px);
+      --safe-left:env(safe-area-inset-left, 0px);
+    }
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    html, body{
+      min-height:100%;
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+      font-family:'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(79,70,229,.18), transparent 28%),
+        radial-gradient(circle at left center, rgba(16,185,129,.12), transparent 30%),
+        linear-gradient(180deg, #07111f 0%, #0b1325 100%);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      text-rendering:optimizeLegibility;
+    }
+
+    #root{
+      min-height:100vh;
+      position:relative;
+      z-index:1;
+    }
+
+    #digiy-app-loader{
+      position:fixed;
+      inset:0;
+      z-index:2147483645;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:
+        calc(var(--safe-top) + 24px)
+        calc(var(--safe-right) + 20px)
+        calc(var(--safe-bottom) + 24px)
+        calc(var(--safe-left) + 20px);
+      background:
+        radial-gradient(circle at top right, rgba(79,70,229,.16), transparent 30%),
+        radial-gradient(circle at bottom left, rgba(16,185,129,.12), transparent 28%),
+        linear-gradient(180deg, rgba(7,17,31,.98) 0%, rgba(11,19,37,.985) 100%);
+      opacity:1;
+      visibility:visible;
+      transition:opacity .35s ease, visibility .35s ease;
+    }
+
+    #digiy-app-loader.is-hidden{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+
+    .digiy-loader-card{
+      width:min(100%, 420px);
+      border:1px solid var(--line);
+      border-radius:26px;
+      padding:26px 22px;
+      background:rgba(10,19,35,.74);
+      backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+      box-shadow:var(--shadow);
+      text-align:center;
+    }
+
+    .digiy-loader-eagle{
+      font-size:40px;
+      line-height:1;
+      margin-bottom:14px;
+      display:block;
+    }
+
+    .digiy-loader-title{
+      font-size:22px;
+      font-weight:900;
+      letter-spacing:-.02em;
+      color:#fff;
+      margin-bottom:8px;
+    }
+
+    .digiy-loader-text{
+      font-size:14px;
+      line-height:1.55;
+      color:var(--muted);
+      margin-bottom:18px;
+    }
+
+    .digiy-loader-bar{
+      width:100%;
+      height:10px;
+      border-radius:999px;
+      overflow:hidden;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.06);
+    }
+
+    .digiy-loader-bar > span{
+      display:block;
+      width:42%;
+      height:100%;
+      border-radius:999px;
+      background:linear-gradient(90deg, var(--gold) 0%, var(--green) 55%, var(--violet) 100%);
+      animation:digiyLoaderMove 1.15s ease-in-out infinite;
+      transform-origin:left center;
+    }
+
+    .digiy-loader-note{
+      margin-top:12px;
+      font-size:12px;
+      color:rgba(229,238,251,.68);
+      letter-spacing:.02em;
+    }
+
+    @keyframes digiyLoaderMove{
+      0%{ transform:translateX(-80%) scaleX(.8); }
+      50%{ transform:translateX(90%) scaleX(1.05); }
+      100%{ transform:translateX(230%) scaleX(.85); }
+    }
+
+    .digiy-floating-back{
+      position:fixed !important;
+      top:calc(var(--safe-top) + 12px) !important;
+      left:calc(var(--safe-left) + 12px) !important;
+      z-index:2147483647 !important;
+      display:inline-flex !important;
+      align-items:center !important;
+      justify-content:center !important;
+      gap:8px !important;
+      min-height:46px !important;
+      padding:12px 16px !important;
+      border-radius:999px !important;
+      border:1px solid rgba(255,255,255,.2) !important;
+      background:linear-gradient(135deg, #facc15 0%, #10b981 100%) !important;
+      color:#0f172a !important;
+      text-decoration:none !important;
+      font-family:'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+      font-size:14px !important;
+      font-weight:900 !important;
+      line-height:1 !important;
+      box-shadow:0 16px 42px rgba(0,0,0,.28) !important;
+      backdrop-filter:blur(12px) !important;
+      -webkit-backdrop-filter:blur(12px) !important;
+      opacity:1 !important;
+      visibility:visible !important;
+      pointer-events:auto !important;
+      cursor:pointer !important;
+      user-select:none !important;
+      -webkit-user-select:none !important;
+      white-space:nowrap !important;
+      transition:transform .18s ease, box-shadow .18s ease, opacity .18s ease, background .2s ease !important;
+    }
+
+    .digiy-floating-back:hover{
+      transform:translateY(-1px) !important;
+      box-shadow:0 20px 44px rgba(0,0,0,.32) !important;
+    }
+
+    .digiy-floating-back:active{
+      transform:translateY(0) scale(.985) !important;
+    }
+
+    .digiy-floating-back:focus-visible{
+      outline:3px solid rgba(255,255,255,.26) !important;
+      outline-offset:2px !important;
+    }
+
+    .digiy-floating-back__icon{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:14px;
+      line-height:1;
+      flex:0 0 auto;
+    }
+
+    .digiy-floating-back__label{
+      display:inline-block;
+      line-height:1;
+    }
+
+    .digiy-floating-back.is-compact{
+      padding:12px 13px !important;
+      gap:0 !important;
+      min-width:46px !important;
+    }
+
+    .digiy-floating-back.is-compact .digiy-floating-back__label{
+      display:none !important;
+    }
+
+    body[data-app-ready="true"] #digiy-app-loader{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+
+    @media (max-width:640px){
+      .digiy-loader-card{
+        padding:22px 18px;
+        border-radius:22px;
+      }
+
+      .digiy-loader-title{
+        font-size:20px;
+      }
+
+      .digiy-loader-text{
+        font-size:13px;
+      }
+
+      .digiy-floating-back{
+        top:calc(var(--safe-top) + 10px) !important;
+        left:calc(var(--safe-left) + 10px) !important;
+        min-height:42px !important;
+        padding:10px 13px !important;
+        font-size:13px !important;
+      }
+
+      .digiy-floating-back__icon{
+        font-size:13px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      html{
+        scroll-behavior:auto;
+      }
+
+      .digiy-loader-bar > span{
+        animation:none;
+        width:70%;
+        transform:none;
+      }
+
+      .digiy-floating-back,
+      #digiy-app-loader{
+        transition:none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <div id="digiy-app-loader" aria-live="polite" aria-label="Chargement de DIGIY AUDIO">
+    <div class="digiy-loader-card">
+      <span class="digiy-loader-eagle" aria-hidden="true">🦅</span>
+      <div class="digiy-loader-title">DIGIY AUDIO</div>
+      <p class="digiy-loader-text">
+        Préparation de l’écoute intelligente. On pose le terrain proprement.
+      </p>
+      <div class="digiy-loader-bar" aria-hidden="true">
+        <span></span>
+      </div>
+      <div class="digiy-loader-note">Chargement sécurisé de l’interface</div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      if (window.__DIGIY_AUDIO_SHELL_INITIALIZED__) return;
+      window.__DIGIY_AUDIO_SHELL_INITIALIZED__ = true;
+
+      const SITE_URL = "https://digiylyfe.com/";
+      const BTN_ID = "digiy-floating-back-site";
+      const LOADER_ID = "digiy-app-loader";
+
+      let observer = null;
+      let rafId = null;
+      let hideLoaderTimer = null;
+
+      function isCompactMode() {
+        return window.innerWidth <= 640;
+      }
+
+      function setCompactState(btn) {
+        if (!btn) return;
+        btn.classList.toggle("is-compact", isCompactMode());
+      }
+
+      function buildButtonContent(btn) {
+        btn.innerHTML = `
+          <span class="digiy-floating-back__icon" aria-hidden="true">↩️</span>
+          <span class="digiy-floating-back__label">Retour site</span>
+        `;
+      }
+
+      function ensureButton() {
+        if (!document.body) return null;
+
+        let btn = document.getElementById(BTN_ID);
+
+        if (!btn) {
+          btn = document.createElement("a");
+          btn.id = BTN_ID;
+          btn.href = SITE_URL;
+          btn.className = "digiy-floating-back";
+          btn.setAttribute("aria-label", "Retour au site DIGIYLYFE");
+          buildButtonContent(btn);
+          document.body.appendChild(btn);
+        }
+
+        if (!btn.classList.contains("digiy-floating-back")) {
+          btn.classList.add("digiy-floating-back");
+        }
+
+        if (!btn.querySelector(".digiy-floating-back__icon")) {
+          buildButtonContent(btn);
+        }
+
+        if (btn.parentNode !== document.body) {
+          document.body.appendChild(btn);
+        }
+
+        setCompactState(btn);
+        return btn;
+      }
+
+      function scheduleEnsure() {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          ensureButton();
+          rafId = null;
+        });
+      }
+
+      function hideLoader(force) {
+        const loader = document.getElementById(LOADER_ID);
+        if (!loader) return;
+
+        document.body.setAttribute("data-app-ready", "true");
+
+        if (force) {
+          loader.classList.add("is-hidden");
+          return;
+        }
+
+        if (hideLoaderTimer) clearTimeout(hideLoaderTimer);
+        hideLoaderTimer = setTimeout(() => {
+          loader.classList.add("is-hidden");
+        }, 180);
+      }
+
+      function markReadyWhenRootHasContent() {
+        const root = document.getElementById("root");
+        if (!root) {
+          hideLoader(false);
+          return;
+        }
+
+        const hasVisualContent =
+          root.children.length > 0 ||
+          (root.textContent && root.textContent.trim().length > 0);
+
+        if (hasVisualContent) {
+          hideLoader(false);
+        }
+      }
+
+      function bootLoaderWatch() {
+        const root = document.getElementById("root");
+
+        window.addEventListener("load", function () {
+          markReadyWhenRootHasContent();
+          setTimeout(() => hideLoader(false), 700);
+          setTimeout(() => hideLoader(true), 1800);
+        }, { once: true });
+
+        if (!root) {
+          setTimeout(() => hideLoader(false), 500);
+          return;
+        }
+
+        const rootObserver = new MutationObserver(() => {
+          markReadyWhenRootHasContent();
+        });
+
+        rootObserver.observe(root, {
+          childList: true,
+          subtree: true,
+          characterData: true
+        });
+
+        setTimeout(() => hideLoader(false), 1200);
+        setTimeout(() => hideLoader(true), 2600);
+      }
+
+      function bootButtonWatch() {
+        ensureButton();
+
+        window.addEventListener("resize", scheduleEnsure, { passive: true });
+        window.addEventListener("pageshow", scheduleEnsure);
+        window.addEventListener("focus", scheduleEnsure);
+        document.addEventListener("visibilitychange", scheduleEnsure);
+
+        observer = new MutationObserver((mutations) => {
+          for (const mutation of mutations) {
+            if (mutation.type === "childList") {
+              scheduleEnsure();
+              break;
+            }
+          }
+        });
+
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
+      }
+
+      function boot() {
+        bootButtonWatch();
+        bootLoaderWatch();
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", boot, { once: true });
+      } else {
+        boot();
+      }
+    })();
+  </script>
+
   <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>
