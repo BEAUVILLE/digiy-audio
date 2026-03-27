@@ -44,19 +44,9 @@
       --safe-left:env(safe-area-inset-left, 0px);
     }
 
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-    }
-
-    html, body{
-      min-height:100%;
-    }
-
-    html{
-      scroll-behavior:smooth;
-    }
+    *{ margin:0; padding:0; box-sizing:border-box; }
+    html, body{ min-height:100%; }
+    html{ scroll-behavior:smooth; }
 
     body{
       font-family:'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -80,7 +70,7 @@
     #digiy-app-loader{
       position:fixed;
       inset:0;
-      z-index:2147483645;
+      z-index:9000;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -122,53 +112,23 @@
       text-align:center;
     }
 
-    .digiy-loader-eagle{
-      font-size:40px;
-      line-height:1;
-      margin-bottom:14px;
-      display:block;
-    }
-
-    .digiy-loader-title{
-      font-size:22px;
-      font-weight:900;
-      letter-spacing:-.02em;
-      color:#fff;
-      margin-bottom:8px;
-    }
-
-    .digiy-loader-text{
-      font-size:14px;
-      line-height:1.55;
-      color:var(--muted);
-      margin-bottom:18px;
-    }
+    .digiy-loader-eagle{ font-size:40px; line-height:1; margin-bottom:14px; display:block; }
+    .digiy-loader-title{ font-size:22px; font-weight:900; letter-spacing:-.02em; color:#fff; margin-bottom:8px; }
+    .digiy-loader-text{ font-size:14px; line-height:1.55; color:var(--muted); margin-bottom:18px; }
 
     .digiy-loader-bar{
-      width:100%;
-      height:10px;
-      border-radius:999px;
-      overflow:hidden;
-      background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.06);
+      width:100%; height:10px; border-radius:999px; overflow:hidden;
+      background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.06);
     }
 
     .digiy-loader-bar > span{
-      display:block;
-      width:42%;
-      height:100%;
-      border-radius:999px;
+      display:block; width:42%; height:100%; border-radius:999px;
       background:linear-gradient(90deg, var(--gold) 0%, var(--green) 55%, var(--violet) 100%);
       animation:digiyLoaderMove 1.15s ease-in-out infinite;
       transform-origin:left center;
     }
 
-    .digiy-loader-note{
-      margin-top:12px;
-      font-size:12px;
-      color:rgba(229,238,251,.68);
-      letter-spacing:.02em;
-    }
+    .digiy-loader-note{ margin-top:12px; font-size:12px; color:rgba(229,238,251,.68); letter-spacing:.02em; }
 
     @keyframes digiyLoaderMove{
       0%{ transform:translateX(-80%) scaleX(.8); }
@@ -176,86 +136,70 @@
       100%{ transform:translateX(230%) scaleX(.85); }
     }
 
-    /* ── BOUTON RETOUR SITE ── */
-    .digiy-floating-back{
-      position:fixed;
-      top:calc(var(--safe-top) + 12px);
-      left:calc(var(--safe-left) + 12px);
-      z-index:2147483647;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      min-height:46px;
-      padding:12px 16px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.2);
-      background:linear-gradient(135deg, #facc15 0%, #10b981 100%);
-      color:#0f172a;
-      text-decoration:none;
-      font-family:'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size:14px;
-      font-weight:900;
-      line-height:1;
-      box-shadow:0 16px 42px rgba(0,0,0,.28);
-      backdrop-filter:blur(12px);
-      -webkit-backdrop-filter:blur(12px);
-      white-space:nowrap;
-      transition:transform .18s ease, box-shadow .18s ease;
+    /* ── BOUTON RETOUR
+       Ciblé par ID + tout en !important
+       Placé EN DERNIER dans le body → au-dessus de tout dans le DOM
+    ── */
+    #digiy-floating-back-site{
+      position:fixed !important;
+      top:calc(var(--safe-top) + 12px) !important;
+      left:calc(var(--safe-left) + 12px) !important;
+      z-index:2147483647 !important;
+      display:inline-flex !important;
+      align-items:center !important;
+      justify-content:center !important;
+      gap:8px !important;
+      min-height:46px !important;
+      padding:12px 16px !important;
+      border-radius:999px !important;
+      border:1px solid rgba(255,255,255,.2) !important;
+      background:linear-gradient(135deg, #facc15 0%, #10b981 100%) !important;
+      color:#0f172a !important;
+      text-decoration:none !important;
+      font-family:'Inter', system-ui, sans-serif !important;
+      font-size:14px !important;
+      font-weight:900 !important;
+      line-height:1 !important;
+      box-shadow:0 16px 42px rgba(0,0,0,.28) !important;
+      white-space:nowrap !important;
+      pointer-events:auto !important;
+      cursor:pointer !important;
+      transition:transform .18s ease, box-shadow .18s ease !important;
     }
 
-    .digiy-floating-back:hover{
-      transform:translateY(-1px);
-      box-shadow:0 20px 44px rgba(0,0,0,.32);
+    #digiy-floating-back-site:hover{
+      transform:translateY(-1px) !important;
+      box-shadow:0 20px 44px rgba(0,0,0,.32) !important;
     }
 
-    .digiy-floating-back:active{
-      transform:translateY(0) scale(.985);
-    }
-
-    .digiy-floating-back:focus-visible{
-      outline:3px solid rgba(255,255,255,.26);
-      outline-offset:2px;
+    #digiy-floating-back-site:active{
+      transform:translateY(0) scale(.985) !important;
     }
 
     @media (max-width:640px){
-      .digiy-loader-card{
-        padding:22px 18px;
-        border-radius:22px;
-      }
+      .digiy-loader-card{ padding:22px 18px; border-radius:22px; }
       .digiy-loader-title{ font-size:20px; }
       .digiy-loader-text{ font-size:13px; }
 
-      .digiy-floating-back{
-        top:calc(var(--safe-top) + 10px);
-        left:calc(var(--safe-left) + 10px);
-        min-height:42px;
-        padding:10px 13px;
-        font-size:13px;
-        gap:0;
+      #digiy-floating-back-site{
+        top:calc(var(--safe-top) + 10px) !important;
+        left:calc(var(--safe-left) + 10px) !important;
+        min-height:42px !important;
+        padding:10px 13px !important;
+        font-size:13px !important;
+        gap:0 !important;
       }
-      .digiy-floating-back .back-label{ display:none; }
+
+      #digiy-floating-back-site .back-label{ display:none !important; }
     }
 
     @media (prefers-reduced-motion: reduce){
       html{ scroll-behavior:auto; }
       .digiy-loader-bar > span{ animation:none; width:70%; transform:none; }
-      .digiy-floating-back, #digiy-app-loader{ transition:none; }
     }
   </style>
 </head>
 <body>
-
-  <!-- ✅ BOUTON RETOUR STATIQUE - HTML pur, toujours présent -->
-  <a
-    id="digiy-floating-back-site"
-    href="https://digiylyfe.com/"
-    class="digiy-floating-back"
-    aria-label="Retour au site DIGIYLYFE"
-  >
-    <span aria-hidden="true">↩️</span>
-    <span class="back-label">Retour site</span>
-  </a>
 
   <!-- LOADER -->
   <div id="digiy-app-loader" aria-live="polite" aria-label="Chargement de DIGIY AUDIO">
@@ -265,41 +209,53 @@
       <p class="digiy-loader-text">
         Préparation de l'écoute intelligente. On pose le terrain proprement.
       </p>
-      <div class="digiy-loader-bar" aria-hidden="true">
-        <span></span>
-      </div>
+      <div class="digiy-loader-bar" aria-hidden="true"><span></span></div>
       <div class="digiy-loader-note">Chargement sécurisé de l'interface</div>
     </div>
   </div>
 
+  <!-- APP REACT -->
   <div id="root"></div>
+
+  <!-- SCRIPT REACT -->
+  <script type="module" src="/src/main.jsx"></script>
 
   <!-- LOADER AUTO-HIDE -->
   <script>
     (function () {
       var loader = document.getElementById('digiy-app-loader');
       var root   = document.getElementById('root');
-
       function hide() {
         document.body.setAttribute('data-app-ready', 'true');
         if (loader) loader.classList.add('is-hidden');
       }
-
       if (root) {
         var obs = new MutationObserver(function () {
           if (root.children.length > 0) { hide(); obs.disconnect(); }
         });
         obs.observe(root, { childList: true });
       }
-
-      window.addEventListener('load', function () {
-        setTimeout(hide, 700);
-      }, { once: true });
-
+      window.addEventListener('load', function () { setTimeout(hide, 700); }, { once: true });
       setTimeout(hide, 2600);
     })();
   </script>
 
+  <!--
+    ✅ BOUTON RETOUR SITE — TOUJOURS EN DERNIER DANS LE BODY
+    Après #root + tous les scripts → dernier dans le stacking order du DOM
+    z-index:2147483647 + !important → impossible à écraser
+  -->
+  <a
+    id="digiy-floating-back-site"
+    href="https://digiylyfe.com/"
+    aria-label="Retour au site DIGIYLYFE"
+  >
+    <span aria-hidden="true">↩️</span>
+    <span class="back-label">Retour site</span>
+  </a>
+
+</body>
+</html>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>
