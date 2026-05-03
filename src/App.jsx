@@ -8,9 +8,6 @@ import { Volume2, Pause, Trash2, Copy, Settings, Zap } from 'lucide-react';
 const LANGUAGES = {
   'fr': 'Français',
   'en': 'English',
-  'wo': 'Wolof',
-  'fr-di': 'Diola',
-  'fr-man': 'Mandingue'
 };
 
 const WELCOME_ARTICLE = {
