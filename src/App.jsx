@@ -1,13 +1,9 @@
-from pathlib import Path
-
-out = Path("/mnt/data/App_digiy_audio_premiere_ecoute.jsx")
-
-content = r"""import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Volume2, Pause, Trash2, Copy, Settings, Zap } from 'lucide-react';
 
 const LANGUAGES = {
-  'fr': 'Français',
-  'en': 'English',
+  fr: 'Français',
+  en: 'Anglais'
 };
 
 const WELCOME_ARTICLE = {
@@ -31,7 +27,10 @@ Tu l’écoutes quand tu veux.
 Un article long, une note de travail, un message important, une réflexion, une explication ou une idée : tout peut devenir une écoute.
 
 DIGIY AUDIO aide à ne pas perdre les mots.
-Il donne une voix aux textes.`,
+Il donne une voix aux textes.
+
+DIGIY AUDIO est offert pour commencer simplement.
+Les options avancées pourront venir plus tard dans les offres DIGIY.`,
   title: 'Première écoute — comprendre DIGIY AUDIO',
   timestamp: 'Toujours disponible',
   language: 'fr',
@@ -213,7 +212,7 @@ export default function DIGIYAudio() {
                 DIGIY AUDIO
               </h1>
               <p className={`mt-1 text-sm font-semibold ${darkMode ? 'text-slate-300' : 'text-gray-600'}`}>
-                Range tes textes, articles et notes. Reviens les écouter quand tu veux.
+                DIGIY AUDIO est offert pour commencer simplement : range tes textes, articles et notes, puis reviens les écouter quand tu veux.
               </p>
             </div>
           </div>
@@ -281,9 +280,12 @@ export default function DIGIYAudio() {
             <div>
               <p className="text-sm font-black text-indigo-600 uppercase tracking-wide">Première écoute déjà prête</p>
               <h2 className="mt-1 text-2xl font-black">Comprendre DIGIY AUDIO</h2>
-              <p className={`mt-2 text-sm leading-6 ${darkMode ? 'text-slate-300' : 'text-gray-600'}`}>
-                Le logiciel garde une première explication en dur. Clique sur écouter pour comprendre comment stocker un texte,
-                le retrouver, puis l’écouter à l’oreille.
+              <div className={`mt-3 inline-flex rounded-full px-3 py-2 text-xs font-black ${darkMode ? 'bg-emerald-900/50 text-emerald-200' : 'bg-emerald-100 text-emerald-800'}`}>
+                Offert pour écouter simplement tes textes
+              </div>
+              <p className={`mt-3 text-sm leading-6 ${darkMode ? 'text-slate-300' : 'text-gray-600'}`}>
+                DIGIY AUDIO est offert comme outil d’écoute simple. Clique sur écouter pour comprendre comment stocker un texte,
+                le retrouver, puis l’écouter à l’oreille. Les options avancées pourront venir plus tard dans les offres DIGIY.
               </p>
             </div>
 
@@ -460,14 +462,10 @@ export default function DIGIYAudio() {
       <footer className={`mt-12 py-6 border-t ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-indigo-200'}`}>
         <div className="max-w-6xl mx-auto px-4 text-center text-sm">
           <p className={darkMode ? 'text-slate-400' : 'text-gray-600'}>
-            🦅 DIGIY AUDIO — textes, articles, notes et écoute utile ∞
+            🦅 DIGIY AUDIO — outil offert d’écoute simple · textes, articles, notes ∞
           </p>
         </div>
       </footer>
     </div>
   );
 }
-"""
-out.write_text(content, encoding="utf-8")
-print(out)
-print("Taille:", len(content))
