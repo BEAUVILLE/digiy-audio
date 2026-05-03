@@ -8,14 +8,14 @@
   />
   <meta
     name="description"
-    content="DIGIY AUDIO - Écoute et traduis tes articles. L'Afrique enracinée, connectée au monde"
+    content="DIGIY AUDIO — Écoute, traduis et retrouve tes textes, articles et notes à l’oreille."
   />
   <meta name="theme-color" content="#4f46e5" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="DIGIY AUDIO" />
 
-  <title>DIGIY AUDIO - Écoute intelligente d'articles</title>
+  <title>DIGIY AUDIO — Écoute intelligente de textes</title>
 
   <link
     rel="icon"
@@ -180,6 +180,105 @@
       100%{ transform:translateX(230%) scaleX(.85); }
     }
 
+
+    /* ─────────────────────────────────────────────
+       SECOURS ANTI-ÉCRAN NOIR
+       N'apparaît que si React ne monte pas.
+    ───────────────────────────────────────────── */
+
+    .digiy-react-rescue{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:
+        calc(var(--safe-top) + 92px)
+        calc(var(--safe-right) + 20px)
+        calc(var(--safe-bottom) + 96px)
+        calc(var(--safe-left) + 20px);
+    }
+
+    .digiy-react-rescue-card{
+      width:min(100%,720px);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:30px;
+      padding:26px 22px;
+      background:
+        radial-gradient(circle at top right, rgba(250,204,21,.14), transparent 36%),
+        radial-gradient(circle at bottom left, rgba(16,185,129,.14), transparent 40%),
+        rgba(10,19,35,.84);
+      box-shadow:var(--shadow);
+      text-align:center;
+      backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+    }
+
+    .digiy-react-rescue-badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      min-height:40px;
+      padding:9px 13px;
+      border-radius:999px;
+      border:1px solid rgba(250,204,21,.35);
+      background:rgba(250,204,21,.10);
+      color:#fef3c7;
+      font-weight:900;
+      font-size:13px;
+      margin-bottom:14px;
+    }
+
+    .digiy-react-rescue h1{
+      margin:0;
+      color:#fff;
+      font-size:clamp(28px,6vw,52px);
+      line-height:1;
+      letter-spacing:-.045em;
+      font-weight:900;
+    }
+
+    .digiy-react-rescue p{
+      max-width:62ch;
+      margin:14px auto 0;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.65;
+      font-weight:700;
+    }
+
+    .digiy-react-rescue-actions{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:18px;
+    }
+
+    .digiy-react-rescue-actions a,
+    .digiy-react-rescue-actions button{
+      min-height:46px;
+      border:none;
+      border-radius:999px;
+      padding:12px 16px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      background:linear-gradient(135deg,#facc15,#10b981);
+      color:#0f172a;
+      text-decoration:none;
+      font-weight:900;
+      cursor:pointer;
+      font-family:'Inter', system-ui, sans-serif;
+    }
+
+    .digiy-react-rescue-actions .soft{
+      background:rgba(255,255,255,.08);
+      color:#e5eefb;
+      border:1px solid rgba(255,255,255,.14);
+    }
+
     /* ─────────────────────────────────────────────
        PORTES DIGIY : SITE / HUB / TARIFS
        Placées en dernier dans le body avec z-index fort.
@@ -321,7 +420,7 @@
   <!-- SCRIPT REACT -->
   <script type="module" src="/src/main.jsx"></script>
 
-  <!-- LOADER AUTO-HIDE -->
+  <!-- LOADER AUTO-HIDE + SECOURS ANTI-ÉCRAN NOIR -->
   <script>
     (function () {
       var loader = document.getElementById('digiy-app-loader');
@@ -330,6 +429,34 @@
       function hide() {
         document.body.setAttribute('data-app-ready', 'true');
         if (loader) loader.classList.add('is-hidden');
+      }
+
+      function showRescueIfNeeded() {
+        if (!root) return;
+
+        var hasReactContent = root.children && root.children.length > 0;
+        if (hasReactContent) {
+          hide();
+          return;
+        }
+
+        root.innerHTML = ''
+          + '<section class="digiy-react-rescue" aria-label="DIGIY AUDIO secours">'
+          + '  <div class="digiy-react-rescue-card">'
+          + '    <div class="digiy-react-rescue-badge">🎧 DIGIY AUDIO</div>'
+          + '    <h1>Le logiciel ne s’est pas chargé.</h1>'
+          + '    <p>Ce n’est pas ton texte qui bloque : c’est le moteur React de la page. Vérifie que le fichier <strong>/src/main.jsx</strong> existe bien sur le domaine, ou que la version construite de l’application est bien publiée.</p>'
+          + '    <p>DIGIY AUDIO sert à ranger des textes, articles et notes pour les retrouver ensuite en écoute.</p>'
+          + '    <div class="digiy-react-rescue-actions">'
+          + '      <button type="button" onclick="location.reload()">🔄 Recharger</button>'
+          + '      <a class="soft" href="https://digiylyfe.com/">🌍 Site</a>'
+          + '      <a class="soft" href="https://pro-espace.digiylyfe.com/">🧭 HUB</a>'
+          + '      <a class="soft" href="https://tarifs.digiylyfe.com/">📦 Tarifs</a>'
+          + '    </div>'
+          + '  </div>'
+          + '</section>';
+
+        hide();
       }
 
       if (root) {
@@ -344,10 +471,14 @@
       }
 
       window.addEventListener('load', function () {
-        setTimeout(hide, 700);
+        setTimeout(function () {
+          if (root && root.children.length > 0) {
+            hide();
+          }
+        }, 700);
       }, { once: true });
 
-      setTimeout(hide, 2600);
+      setTimeout(showRescueIfNeeded, 3600);
     })();
   </script>
 
@@ -370,7 +501,7 @@
     <div class="digiy-floating-right">
       <a
         class="digiy-floating-btn"
-        href="https://digiy-hub.digiylyfe.com/"
+        href="https://pro-espace.digiylyfe.com/"
         aria-label="Ouvrir le HUB DIGIY"
       >
         <span aria-hidden="true">🧭</span>
