@@ -280,7 +280,7 @@
     }
 
     /* ─────────────────────────────────────────────
-       PORTES DIGIY : SITE / HUB / TARIFS
+       PORTES DIGIY : SITE / HUB / TARIFS / PRO
        Placées en dernier dans le body avec z-index fort.
     ───────────────────────────────────────────── */
 
@@ -450,7 +450,7 @@
           + '    <div class="digiy-react-rescue-actions">'
           + '      <button type="button" onclick="location.reload()">🔄 Recharger</button>'
           + '      <a class="soft" href="https://digiylyfe.com/">🌍 Site</a>'
-          + '      <a class="soft" href="https://pro-espace.digiylyfe.com/">🧭 HUB</a>'
+          + '      <a class="soft" href="https://digiy-hub.digiylyfe.com/">🧭 HUB</a>'
           + '      <a class="soft" href="https://tarifs.digiylyfe.com/">📦 Tarifs</a>'
           + '    </div>'
           + '  </div>'
@@ -484,7 +484,7 @@
 
   <!--
     PORTES DIGIY — TOUJOURS EN DERNIER DANS LE BODY
-    Site / HUB / Tarifs restent accessibles même si React charge lentement.
+    Site / HUB / Tarifs / Pro restent accessibles même si React charge lentement.
   -->
   <nav id="digiy-floating-links" aria-label="Navigation DIGIYLYFE">
     <div class="digiy-floating-left">
@@ -501,7 +501,7 @@
     <div class="digiy-floating-right">
       <a
         class="digiy-floating-btn"
-        href="https://pro-espace.digiylyfe.com/"
+        href="https://digiy-hub.digiylyfe.com/"
         aria-label="Ouvrir le HUB DIGIY"
       >
         <span aria-hidden="true">🧭</span>
@@ -515,6 +515,15 @@
       >
         <span aria-hidden="true">📦</span>
         <span class="txt">Tarifs</span>
+      </a>
+
+      <a
+        class="digiy-floating-btn"
+        href="https://pro-espace.digiylyfe.com/"
+        aria-label="Ouvrir l’espace pro DIGIY"
+      >
+        <span aria-hidden="true">🏢</span>
+        <span class="txt">Pro</span>
       </a>
     </div>
   </nav>
