@@ -83,7 +83,7 @@ export default function DIGIYAudio() {
   const [selectedLanguage, setSelectedLanguage] = useState('fr');
   const [fontSize, setFontSize] = useState(16);
   const [darkMode, setDarkMode] = useState(false);
-  const [speechRate, setSpeechRate] = useState(1);
+  const [speechRate, setSpeechRate] = useState(0.78);
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const speechSynthesisRef = useRef(null);
