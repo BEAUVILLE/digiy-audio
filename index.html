@@ -15,7 +15,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="DIGIY AUDIO" />
 
-  <title>DIGIY AUDIO — Outil offert d’écoute de textes</title>
+  <title>DIGIY AUDIO — Module public d’écoute de textes</title>
 
   <link
     rel="icon"
@@ -381,6 +381,172 @@
       }
     }
 
+
+    /* ─────────────────────────────────────────────
+       LECTEUR PUBLIC DIGIY AUDIO
+       Indépendant du moteur React : public, léger, toujours accessible.
+    ───────────────────────────────────────────── */
+
+    #digiy-public-audio-reader{
+      position:relative;
+      z-index:2;
+      width:min(100% - 28px, 860px);
+      margin:0 auto 18px;
+      padding-top:104px;
+    }
+
+    .digiy-public-audio-card{
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:28px;
+      padding:18px;
+      background:
+        radial-gradient(circle at top left, rgba(250,204,21,.14), transparent 36%),
+        radial-gradient(circle at bottom right, rgba(16,185,129,.13), transparent 42%),
+        rgba(10,19,35,.78);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(14px);
+      -webkit-backdrop-filter:blur(14px);
+    }
+
+    .digiy-public-audio-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .digiy-public-audio-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:#fff;
+      font-size:22px;
+      line-height:1.1;
+      font-weight:900;
+      letter-spacing:-.03em;
+    }
+
+    .digiy-public-audio-badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:34px;
+      padding:8px 11px;
+      border-radius:999px;
+      border:1px solid rgba(16,185,129,.28);
+      background:rgba(16,185,129,.10);
+      color:#c7ffe9;
+      font-size:12px;
+      font-weight:900;
+      white-space:nowrap;
+    }
+
+    .digiy-public-audio-text{
+      margin-top:10px;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.65;
+      font-weight:700;
+      max-width:72ch;
+    }
+
+    .digiy-public-audio-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+      align-items:center;
+    }
+
+    .digiy-public-audio-btn{
+      min-height:48px;
+      border:none;
+      border-radius:999px;
+      padding:12px 16px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      font-family:'Inter', system-ui, sans-serif;
+      font-size:14px;
+      font-weight:900;
+      cursor:pointer;
+      color:#0f172a;
+      background:linear-gradient(135deg,#facc15,#10b981);
+      box-shadow:0 14px 34px rgba(16,185,129,.18);
+    }
+
+    .digiy-public-audio-btn.stop{
+      color:#e5eefb;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:none;
+    }
+
+    .digiy-public-audio-btn:disabled{
+      opacity:.58;
+      cursor:not-allowed;
+    }
+
+    .digiy-public-audio-state{
+      color:rgba(229,238,251,.72);
+      font-size:13px;
+      font-weight:800;
+    }
+
+    .digiy-public-audio-progress{
+      margin-top:12px;
+      height:6px;
+      border-radius:999px;
+      overflow:hidden;
+      background:rgba(255,255,255,.09);
+      border:1px solid rgba(255,255,255,.06);
+    }
+
+    .digiy-public-audio-progress > span{
+      display:block;
+      width:0%;
+      height:100%;
+      border-radius:999px;
+      background:linear-gradient(90deg,#facc15,#10b981,#4f46e5);
+      transition:width .18s linear;
+    }
+
+    @media (max-width:760px){
+      #digiy-public-audio-reader{
+        padding-top:112px;
+        margin-bottom:12px;
+      }
+
+      .digiy-public-audio-title{
+        font-size:20px;
+      }
+
+      .digiy-public-audio-actions{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+      }
+
+      .digiy-public-audio-btn{
+        width:100%;
+      }
+
+      .digiy-public-audio-state{
+        grid-column:1 / -1;
+      }
+    }
+
+    @media (max-width:430px){
+      #digiy-public-audio-reader{
+        padding-top:154px;
+      }
+
+      .digiy-public-audio-actions{
+        grid-template-columns:1fr;
+      }
+    }
+
     @media (prefers-reduced-motion: reduce){
       html{
         scroll-behavior:auto;
@@ -413,6 +579,37 @@
       <div class="digiy-loader-note">Les options avancées pourront venir plus tard dans les offres DIGIY.</div>
     </div>
   </div>
+
+
+  <!-- LECTEUR PUBLIC — indépendant de React -->
+  <section id="digiy-public-audio-reader" aria-label="Lecteur public DIGIY AUDIO">
+    <div class="digiy-public-audio-card">
+      <div class="digiy-public-audio-head">
+        <div>
+          <div class="digiy-public-audio-title">
+            <span aria-hidden="true">🎧</span>
+            <span>DIGIY AUDIO — lecteur public</span>
+          </div>
+          <p class="digiy-public-audio-text">
+            Outil public offert : tu poses un texte, un article ou une note, puis tu l’écoutes simplement.
+            Le lecteur reste disponible même si le chargement de l’application prend du temps.
+          </p>
+        </div>
+        <div class="digiy-public-audio-badge">Public · offert pour commencer</div>
+      </div>
+
+      <div class="digiy-public-audio-actions">
+        <button class="digiy-public-audio-btn" id="digiyPublicAudioPlay" type="button">▶️ Lecture</button>
+        <button class="digiy-public-audio-btn stop" id="digiyPublicAudioStop" type="button">⏹ Arrêt</button>
+        <span class="digiy-public-audio-state" id="digiyPublicAudioState">Prêt à écouter.</span>
+      </div>
+
+      <div class="digiy-public-audio-progress" aria-hidden="true">
+        <span id="digiyPublicAudioProgress"></span>
+      </div>
+    </div>
+  </section>
+
 
   <!-- APP REACT -->
   <div id="root"></div>
@@ -482,6 +679,186 @@
     })();
   </script>
 
+
+  <!-- LECTEUR PUBLIC — speechSynthesis avec doctrine de prononciation DIGIY -->
+  <script>
+    (function () {
+      "use strict";
+
+      var playBtn = document.getElementById("digiyPublicAudioPlay");
+      var stopBtn = document.getElementById("digiyPublicAudioStop");
+      var state = document.getElementById("digiyPublicAudioState");
+      var bar = document.getElementById("digiyPublicAudioProgress");
+
+      if (!playBtn || !stopBtn || !state || !bar) return;
+
+      if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") {
+        playBtn.disabled = true;
+        stopBtn.disabled = true;
+        state.textContent = "Lecteur vocal non disponible sur ce navigateur.";
+        return;
+      }
+
+      var synth = window.speechSynthesis;
+      var utterance = null;
+      var playing = false;
+      var timer = null;
+      var launchId = 0;
+
+      var PUBLIC_AUDIO_TEXT = [
+        "Bienvenue dans DIGIY AUDIO.",
+        "Ce module est public et offert pour commencer simplement.",
+        "Tu peux poser un texte, un article ou une note, puis l’écouter sans te perdre.",
+        "L’idée est claire : moins de fatigue de lecture, plus d’écoute, plus de clarté.",
+        "Les options avancées pourront venir plus tard dans les offres DIGIY, mais cette porte reste simple pour le public.",
+        "Tu gardes ton texte, tu l’écoutes, tu avances à ton rythme."
+      ].join(" ");
+
+      function prepareSpeechText(text) {
+        return String(text || "")
+          .replace(/\bDIGIYLYFE\b/g, "diji i laïfe")
+          .replace(/\bDIGIY AUDIO\b/g, "diji i audio")
+          .replace(/\bDIGIY\b/g, "diji i")
+          .replace(/\bQR\b/g, "Q R")
+          .replace(/\bSMS\b/g, "S M S")
+          .replace(/\bWhatsApp\b/g, "Ouatsap")
+          .replace(/\bWave\b/g, "Ouève")
+          .replace(/0\s*%/g, "zéro pour cent");
+      }
+
+      function getFrenchVoice() {
+        var voices = synth.getVoices ? synth.getVoices() : [];
+        if (!voices || !voices.length) return null;
+
+        return (
+          voices.find(function (v) { return /fr[-_]?FR/i.test(v.lang) && /google/i.test(v.name); }) ||
+          voices.find(function (v) { return /fr[-_]?FR/i.test(v.lang); }) ||
+          voices.find(function (v) { return /^fr/i.test(v.lang); }) ||
+          null
+        );
+      }
+
+      function resetUi() {
+        playing = false;
+        playBtn.disabled = false;
+        stopBtn.disabled = false;
+        playBtn.textContent = "▶️ Lecture";
+        state.textContent = "Prêt à écouter.";
+        bar.style.width = "0%";
+        if (timer) clearInterval(timer);
+        timer = null;
+      }
+
+      function startProgress(text, currentId) {
+        var words = (text.trim().match(/\S+/g) || []).length;
+        var estimatedDuration = Math.max(3200, words * 520);
+        var elapsed = 0;
+
+        if (timer) clearInterval(timer);
+        bar.style.width = "0%";
+
+        timer = setInterval(function () {
+          if (!playing || currentId !== launchId) {
+            clearInterval(timer);
+            timer = null;
+            return;
+          }
+
+          elapsed += 150;
+          bar.style.width = Math.min((elapsed / estimatedDuration) * 100, 96) + "%";
+        }, 150);
+      }
+
+      function stopAudio() {
+        launchId += 1;
+        try { synth.cancel(); } catch (_) {}
+        utterance = null;
+        resetUi();
+      }
+
+      function launch() {
+        launchId += 1;
+        var currentId = launchId;
+        var speechText = prepareSpeechText(PUBLIC_AUDIO_TEXT);
+
+        try { synth.cancel(); } catch (_) {}
+
+        utterance = new SpeechSynthesisUtterance(speechText);
+        utterance.lang = "fr-FR";
+        utterance.rate = 0.84;
+        utterance.pitch = 1.02;
+        utterance.volume = 1;
+
+        var voice = getFrenchVoice();
+        if (voice) utterance.voice = voice;
+
+        utterance.onstart = function () {
+          if (currentId !== launchId) return;
+          playing = true;
+          playBtn.textContent = "🔊 Lecture en cours";
+          state.textContent = "Lecture en cours…";
+          startProgress(speechText, currentId);
+        };
+
+        utterance.onend = function () {
+          if (currentId !== launchId) return;
+          if (timer) clearInterval(timer);
+          timer = null;
+          bar.style.width = "100%";
+          setTimeout(function () {
+            if (currentId === launchId) resetUi();
+          }, 220);
+        };
+
+        utterance.onerror = function () {
+          if (currentId !== launchId) return;
+          resetUi();
+        };
+
+        synth.speak(utterance);
+      }
+
+      function playAudio() {
+        if (playing) return;
+
+        var voices = synth.getVoices ? synth.getVoices() : [];
+        if (voices && voices.length) {
+          launch();
+          return;
+        }
+
+        var started = false;
+
+        function handleVoicesChanged() {
+          if (started) return;
+          started = true;
+          synth.removeEventListener("voiceschanged", handleVoicesChanged);
+          launch();
+        }
+
+        synth.addEventListener("voiceschanged", handleVoicesChanged);
+
+        setTimeout(function () {
+          if (started) return;
+          started = true;
+          synth.removeEventListener("voiceschanged", handleVoicesChanged);
+          launch();
+        }, 700);
+      }
+
+      playBtn.addEventListener("click", playAudio);
+      stopBtn.addEventListener("click", stopAudio);
+      window.addEventListener("beforeunload", stopAudio);
+
+      document.addEventListener("visibilitychange", function () {
+        if (document.hidden && playing) stopAudio();
+      });
+
+      resetUi();
+    })();
+  </script>
+
+
   <!--
     PORTES DIGIY — TOUJOURS EN DERNIER DANS LE BODY
     Site / HUB / Tarifs / Pro restent accessibles même si React charge lentement.
@@ -519,14 +896,26 @@
 
       <a
         class="digiy-floating-btn"
-        href="https://pro-espace.digiylyfe.com/"
-        aria-label="Ouvrir l’espace pro DIGIY"
+        href="https://wa.me/221771342889?text=Bonjour%20DIGIY%2C%20je%20viens%20du%20module%20DIGIY%20AUDIO%20public."
+        target="_blank"
+        rel="noopener"
+        aria-label="Contacter DIGIY par WhatsApp"
       >
-        <span aria-hidden="true">🏢</span>
-        <span class="txt">Pro</span>
+        <span aria-hidden="true">💬</span>
+        <span class="txt">WhatsApp</span>
+      </a>
+
+      <a
+        class="digiy-floating-btn"
+        href="sms:+221771342889?&body=Bonjour%20DIGIY%2C%20je%20viens%20du%20module%20DIGIY%20AUDIO%20public."
+        aria-label="Contacter DIGIY par SMS"
+      >
+        <span aria-hidden="true">✉️</span>
+        <span class="txt">SMS</span>
       </a>
     </div>
   </nav>
 
 </body>
 </html>
+
