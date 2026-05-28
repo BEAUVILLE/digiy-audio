@@ -63,17 +63,108 @@ function makeTitle(text) {
   return clean.length > 54 ? `${clean.slice(0, 54)}...` : clean;
 }
 
-function pickFrenchVoice() {
-  try {
-    const voices = window.speechSynthesis?.getVoices?.() || [];
+function prepareDigiySpeechText(text) {
+  return String(text || '')
+    .replace(/\bDIGIYLYFE\b/g, 'diji i laïfe')
+    .replace(/\bDIGIY AUDIO\b/g, 'diji i audio')
+    .replace(/\bDIGIY\b/g, 'diji i')
+    .replace(/\bBUILD\b/g, 'artisans tout corps de métiers')
+    .replace(/\bQR\b/g, 'Q R')
+    .replace(/\bSMS\b/g, 'S M S')
+    .replace(/\bWhatsApp\b/g, 'Ouatsap')
+    .replace(/\bWave\b/g, 'Ouève')
+    .replace(/0\s*%/g, 'zéro pour cent');
+}
+
+function getSpeechApi() {
+  if (typeof window === 'undefined') return null;
+  if (!('speechSynthesis' in window)) return null;
+  if (typeof window.SpeechSynthesisUtterance === 'undefined') return null;
+  return window.speechSynthesis;
+}
+
+function pickVoice(languageCode = 'fr') {
+  const synth = getSpeechApi();
+  if (!synth?.getVoices) return null;
+
+  const voices = synth.getVoices() || [];
+  if (!voices.length) return null;
+
+  if (languageCode === 'fr') {
     return (
       voices.find((voice) => /fr[-_]?FR/i.test(voice.lang || '') && /google|audrey|amelie|hortense|julie|thomas|paul|french/i.test(voice.name || '')) ||
       voices.find((voice) => /^fr/i.test(voice.lang || '')) ||
       null
     );
-  } catch (error) {
-    return null;
   }
+
+  return (
+    voices.find((voice) => new RegExp(`^${languageCode}`, 'i').test(voice.lang || '')) ||
+    null
+  );
+}
+
+function waitForVoices(timeout = 900) {
+  const synth = getSpeechApi();
+
+  return new Promise((resolve) => {
+    if (!synth?.getVoices) {
+      resolve([]);
+      return;
+    }
+
+    const existing = synth.getVoices();
+    if (existing && existing.length) {
+      resolve(existing);
+      return;
+    }
+
+    let done = false;
+
+    const finish = () => {
+      if (done) return;
+      done = true;
+      try { synth.removeEventListener('voiceschanged', finish); } catch (_) {}
+      resolve(synth.getVoices ? synth.getVoices() : []);
+    };
+
+    try { synth.addEventListener('voiceschanged', finish); } catch (_) {}
+    window.setTimeout(finish, timeout);
+  });
+}
+
+function splitSpeechText(text, maxLength = 900) {
+  const clean = String(text || '').replace(/\s+/g, ' ').trim();
+  if (!clean) return [];
+
+  const sentences = clean.match(/[^.!?…]+[.!?…]*/g) || [clean];
+  const chunks = [];
+  let current = '';
+
+  sentences.forEach((sentence) => {
+    const next = sentence.trim();
+    if (!next) return;
+
+    if ((current + ' ' + next).trim().length <= maxLength) {
+      current = (current + ' ' + next).trim();
+      return;
+    }
+
+    if (current) chunks.push(current);
+
+    if (next.length <= maxLength) {
+      current = next;
+      return;
+    }
+
+    for (let i = 0; i < next.length; i += maxLength) {
+      chunks.push(next.slice(i, i + maxLength));
+    }
+    current = '';
+  });
+
+  if (current) chunks.push(current);
+  return chunks;
 }
 
 export default function DIGIYAudio() {
@@ -86,13 +177,33 @@ export default function DIGIYAudio() {
   const [speechRate, setSpeechRate] = useState(0.78);
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
-  const speechSynthesisRef = useRef(null);
+  const speechRunIdRef = useRef(0);
+  const isSpeakingRef = useRef(false);
+  const resumeTimerRef = useRef(null);
 
   // Sauvegarder les textes dans localStorage.
   // La première écoute est conservée avec l'historique pour rester disponible.
   useEffect(() => {
     localStorage.setItem('digiyAudioArticles', JSON.stringify(articles));
   }, [articles]);
+
+  // Réveille les voix au montage. Certains navigateurs ne chargent les voix qu'après quelques instants.
+  useEffect(() => {
+    const synth = getSpeechApi();
+    if (!synth) return;
+
+    try { synth.getVoices?.(); } catch (_) {}
+
+    const warmVoices = () => {
+      try { synth.getVoices?.(); } catch (_) {}
+    };
+
+    try { synth.addEventListener('voiceschanged', warmVoices); } catch (_) {}
+
+    return () => {
+      try { synth.removeEventListener('voiceschanged', warmVoices); } catch (_) {}
+    };
+  }, []);
 
   // Traduction simple (utilise MyMemory, gratuit et sans authentification).
   const translateText = async (text, targetLang) => {
@@ -117,6 +228,20 @@ export default function DIGIYAudio() {
     return text;
   };
 
+  const stopSpeech = () => {
+    const synth = getSpeechApi();
+    speechRunIdRef.current += 1;
+    isSpeakingRef.current = false;
+
+    if (resumeTimerRef.current) {
+      clearInterval(resumeTimerRef.current);
+      resumeTimerRef.current = null;
+    }
+
+    try { synth?.cancel?.(); } catch (_) {}
+    setIsSpeaking(false);
+  };
+
   const handleAddArticle = async () => {
     if (!article.trim()) return;
 
@@ -134,41 +259,103 @@ export default function DIGIYAudio() {
   };
 
   const handleSpeak = async (text) => {
+    const synth = getSpeechApi();
+
     if (!text) return;
 
-    if (speechSynthesisRef.current) {
-      speechSynthesis.cancel();
-      setIsSpeaking(false);
-      speechSynthesisRef.current = null;
+    if (!synth) {
+      alert('Lecteur vocal non disponible sur ce navigateur. Essaie Chrome, Edge ou Safari récent.');
       return;
     }
 
-    let textToSpeak = text;
-    if (selectedLanguage !== 'fr') {
-      textToSpeak = await translateText(text, selectedLanguage);
+    if (isSpeakingRef.current || isSpeaking) {
+      stopSpeech();
+      return;
     }
 
-    const utterance = new SpeechSynthesisUtterance(textToSpeak);
-    utterance.rate = speechRate;
-    utterance.lang = selectedLanguage === 'fr' ? 'fr-FR' : selectedLanguage;
+    const runId = speechRunIdRef.current + 1;
+    speechRunIdRef.current = runId;
+    isSpeakingRef.current = true;
+    setIsSpeaking(true);
 
-    if (selectedLanguage === 'fr') {
-      const voice = pickFrenchVoice();
-      if (voice) utterance.voice = voice;
+    try {
+      let textToSpeak = text;
+      if (selectedLanguage !== 'fr') {
+        textToSpeak = await translateText(text, selectedLanguage);
+      }
+
+      if (runId !== speechRunIdRef.current) return;
+
+      const finalText = selectedLanguage === 'fr'
+        ? prepareDigiySpeechText(textToSpeak)
+        : String(textToSpeak || '');
+
+      const chunks = splitSpeechText(finalText);
+      if (!chunks.length) {
+        stopSpeech();
+        return;
+      }
+
+      await waitForVoices(900);
+
+      try { synth.cancel(); } catch (_) {}
+
+      await new Promise((resolve) => window.setTimeout(resolve, 140));
+
+      if (runId !== speechRunIdRef.current) return;
+
+      const voice = pickVoice(selectedLanguage);
+      let index = 0;
+
+      if (resumeTimerRef.current) clearInterval(resumeTimerRef.current);
+      resumeTimerRef.current = window.setInterval(() => {
+        if (speechRunIdRef.current !== runId || !isSpeakingRef.current) return;
+        try { synth.resume?.(); } catch (_) {}
+      }, 5000);
+
+      const finishClean = () => {
+        if (speechRunIdRef.current !== runId) return;
+        isSpeakingRef.current = false;
+        setIsSpeaking(false);
+        if (resumeTimerRef.current) {
+          clearInterval(resumeTimerRef.current);
+          resumeTimerRef.current = null;
+        }
+      };
+
+      const speakNext = () => {
+        if (speechRunIdRef.current !== runId) return;
+
+        if (index >= chunks.length) {
+          finishClean();
+          return;
+        }
+
+        const utterance = new window.SpeechSynthesisUtterance(chunks[index]);
+        index += 1;
+        utterance.lang = selectedLanguage === 'fr' ? 'fr-FR' : selectedLanguage;
+        utterance.rate = Number(speechRate) || 0.78;
+        utterance.pitch = 1.02;
+        utterance.volume = 1;
+        if (voice) utterance.voice = voice;
+
+        utterance.onend = speakNext;
+        utterance.onerror = finishClean;
+
+        try {
+          synth.speak(utterance);
+          window.setTimeout(() => {
+            try { synth.resume?.(); } catch (_) {}
+          }, 90);
+        } catch (error) {
+          finishClean();
+        }
+      };
+
+      speakNext();
+    } catch (error) {
+      stopSpeech();
     }
-
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => {
-      setIsSpeaking(false);
-      speechSynthesisRef.current = null;
-    };
-    utterance.onerror = () => {
-      setIsSpeaking(false);
-      speechSynthesisRef.current = null;
-    };
-
-    speechSynthesisRef.current = utterance;
-    speechSynthesis.speak(utterance);
   };
 
   const handleDeleteArticle = (id) => {
@@ -182,18 +369,12 @@ export default function DIGIYAudio() {
   };
 
   const handleStopSpeak = () => {
-    speechSynthesis.cancel();
-    setIsSpeaking(false);
-    speechSynthesisRef.current = null;
+    stopSpeech();
   };
 
   useEffect(() => {
     return () => {
-      try {
-        speechSynthesis.cancel();
-      } catch (error) {
-        // Rien à faire : certains navigateurs coupent déjà la voix au démontage.
-      }
+      stopSpeech();
     };
   }, []);
 
