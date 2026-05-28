@@ -680,7 +680,7 @@
   </script>
 
 
-  <!-- LECTEUR PUBLIC — speechSynthesis avec doctrine de prononciation DIGIY -->
+  <!-- LECTEUR PUBLIC — speechSynthesis robuste avec doctrine de prononciation DIGIY -->
   <script>
     (function () {
       "use strict";
@@ -692,7 +692,7 @@
 
       if (!playBtn || !stopBtn || !state || !bar) return;
 
-      if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") {
+      if (!("speechSynthesis" in window) || typeof window.SpeechSynthesisUtterance === "undefined") {
         playBtn.disabled = true;
         stopBtn.disabled = true;
         state.textContent = "Lecteur vocal non disponible sur ce navigateur.";
@@ -704,6 +704,7 @@
       var playing = false;
       var timer = null;
       var launchId = 0;
+      var voicesReadyOnce = false;
 
       var PUBLIC_AUDIO_TEXT = [
         "Bienvenue dans DIGIY AUDIO.",
@@ -719,6 +720,7 @@
           .replace(/\bDIGIYLYFE\b/g, "diji i laïfe")
           .replace(/\bDIGIY AUDIO\b/g, "diji i audio")
           .replace(/\bDIGIY\b/g, "diji i")
+          .replace(/\bBUILD\b/g, "artisans tout corps de métiers")
           .replace(/\bQR\b/g, "Q R")
           .replace(/\bSMS\b/g, "S M S")
           .replace(/\bWhatsApp\b/g, "Ouatsap")
@@ -726,8 +728,16 @@
           .replace(/0\s*%/g, "zéro pour cent");
       }
 
+      function getVoicesSafe() {
+        try {
+          return synth.getVoices ? synth.getVoices() : [];
+        } catch (_) {
+          return [];
+        }
+      }
+
       function getFrenchVoice() {
-        var voices = synth.getVoices ? synth.getVoices() : [];
+        var voices = getVoicesSafe();
         if (!voices || !voices.length) return null;
 
         return (
@@ -738,7 +748,7 @@
         );
       }
 
-      function resetUi() {
+      function setReady() {
         playing = false;
         playBtn.disabled = false;
         stopBtn.disabled = false;
@@ -750,12 +760,12 @@
       }
 
       function startProgress(text, currentId) {
-        var words = (text.trim().match(/\S+/g) || []).length;
-        var estimatedDuration = Math.max(3200, words * 520);
+        var words = (String(text || "").trim().match(/\S+/g) || []).length;
+        var estimatedDuration = Math.max(3500, words * 540);
         var elapsed = 0;
 
         if (timer) clearInterval(timer);
-        bar.style.width = "0%";
+        bar.style.width = "2%";
 
         timer = setInterval(function () {
           if (!playing || currentId !== launchId) {
@@ -772,89 +782,133 @@
       function stopAudio() {
         launchId += 1;
         try { synth.cancel(); } catch (_) {}
+        try { if (synth.resume) synth.resume(); } catch (_) {}
         utterance = null;
-        resetUi();
+        setReady();
+      }
+
+      function waitForVoices(callback) {
+        var voices = getVoicesSafe();
+        if (voices.length || voicesReadyOnce) {
+          voicesReadyOnce = true;
+          callback();
+          return;
+        }
+
+        var done = false;
+        function finish() {
+          if (done) return;
+          done = true;
+          voicesReadyOnce = true;
+          try {
+            if (typeof synth.removeEventListener === "function") {
+              synth.removeEventListener("voiceschanged", finish);
+            }
+          } catch (_) {}
+          if (synth.onvoiceschanged === finish) synth.onvoiceschanged = null;
+          callback();
+        }
+
+        try {
+          if (typeof synth.addEventListener === "function") {
+            synth.addEventListener("voiceschanged", finish, { once: true });
+          } else {
+            synth.onvoiceschanged = finish;
+          }
+        } catch (_) {
+          synth.onvoiceschanged = finish;
+        }
+
+        setTimeout(finish, 450);
       }
 
       function launch() {
         launchId += 1;
         var currentId = launchId;
         var speechText = prepareSpeechText(PUBLIC_AUDIO_TEXT);
+        var voice = getFrenchVoice();
 
         try { synth.cancel(); } catch (_) {}
+        try { if (synth.resume) synth.resume(); } catch (_) {}
 
-        utterance = new SpeechSynthesisUtterance(speechText);
-        utterance.lang = "fr-FR";
-        utterance.rate = 0.84;
-        utterance.pitch = 1.02;
-        utterance.volume = 1;
+        playing = true;
+        playBtn.disabled = true;
+        stopBtn.disabled = false;
+        playBtn.textContent = "🔊 Lecture en cours";
+        state.textContent = "Lecture en cours…";
+        startProgress(speechText, currentId);
 
-        var voice = getFrenchVoice();
-        if (voice) utterance.voice = voice;
-
-        utterance.onstart = function () {
+        setTimeout(function () {
           if (currentId !== launchId) return;
-          playing = true;
-          playBtn.textContent = "🔊 Lecture en cours";
-          state.textContent = "Lecture en cours…";
-          startProgress(speechText, currentId);
-        };
 
-        utterance.onend = function () {
-          if (currentId !== launchId) return;
-          if (timer) clearInterval(timer);
-          timer = null;
-          bar.style.width = "100%";
-          setTimeout(function () {
-            if (currentId === launchId) resetUi();
-          }, 220);
-        };
+          utterance = new SpeechSynthesisUtterance(speechText);
+          utterance.lang = "fr-FR";
+          utterance.rate = 0.84;
+          utterance.pitch = 1.02;
+          utterance.volume = 1;
+          if (voice) utterance.voice = voice;
 
-        utterance.onerror = function () {
-          if (currentId !== launchId) return;
-          resetUi();
-        };
+          utterance.onstart = function () {
+            if (currentId !== launchId) return;
+            playBtn.disabled = false;
+            playBtn.textContent = "🔊 Lecture en cours";
+            state.textContent = "Lecture en cours…";
+          };
 
-        synth.speak(utterance);
+          utterance.onend = function () {
+            if (currentId !== launchId) return;
+            if (timer) clearInterval(timer);
+            timer = null;
+            bar.style.width = "100%";
+            state.textContent = "Lecture terminée.";
+            setTimeout(function () {
+              if (currentId === launchId) setReady();
+            }, 260);
+          };
+
+          utterance.onerror = function () {
+            if (currentId !== launchId) return;
+            if (timer) clearInterval(timer);
+            timer = null;
+            playing = false;
+            playBtn.disabled = false;
+            stopBtn.disabled = false;
+            playBtn.textContent = "▶️ Relancer";
+            bar.style.width = "0%";
+            state.textContent = "Le navigateur a bloqué la voix. Clique encore une fois sur Lecture.";
+          };
+
+          try {
+            synth.speak(utterance);
+
+            // Secours pour Chrome/Safari : parfois la voix reste en pause après cancel().
+            setTimeout(function () {
+              try {
+                if (currentId === launchId && synth.paused && synth.resume) synth.resume();
+              } catch (_) {}
+            }, 220);
+          } catch (_) {
+            utterance.onerror();
+          }
+        }, 90);
       }
 
       function playAudio() {
         if (playing) return;
-
-        var voices = synth.getVoices ? synth.getVoices() : [];
-        if (voices && voices.length) {
-          launch();
-          return;
-        }
-
-        var started = false;
-
-        function handleVoicesChanged() {
-          if (started) return;
-          started = true;
-          synth.removeEventListener("voiceschanged", handleVoicesChanged);
-          launch();
-        }
-
-        synth.addEventListener("voiceschanged", handleVoicesChanged);
-
-        setTimeout(function () {
-          if (started) return;
-          started = true;
-          synth.removeEventListener("voiceschanged", handleVoicesChanged);
-          launch();
-        }, 700);
+        state.textContent = "Préparation de la voix…";
+        waitForVoices(launch);
       }
 
       playBtn.addEventListener("click", playAudio);
       stopBtn.addEventListener("click", stopAudio);
+      window.addEventListener("pagehide", stopAudio);
       window.addEventListener("beforeunload", stopAudio);
 
       document.addEventListener("visibilitychange", function () {
         if (document.hidden && playing) stopAudio();
       });
 
-      resetUi();
+      setReady();
     })();
   </script>
 
@@ -918,4 +972,6 @@
 
 </body>
 </html>
+
+
 
