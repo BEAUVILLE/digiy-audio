@@ -21,13 +21,13 @@
   </style>
 </head>
 <body>
-  <header class="top"><div class="topin"><a class="brand" href="./"><span class="mark">🎧</span><span>DIGIY AUDIO<span class="sub">Voix directe + choix de voix</span></span></a><nav class="nav"><a class="main" href="https://digiylyfe.com/">↩️ <span class="txt">Site</span></a><a href="https://digiy-hub.digiylyfe.com/">🧭 <span class="txt">HUB</span></a><a href="https://tarifs.digiylyfe.com/">📦 <span class="txt">Tarifs</span></a><a href="https://wa.me/221771342889?text=Bonjour%20DIGIY%2C%20je%20viens%20du%20module%20DIGIY%20AUDIO%20public." target="_blank" rel="noopener">💬 <span class="txt">WhatsApp</span></a></nav></div></header>
+  <header class="top"><div class="topin"><a class="brand" href="./"><span class="mark">🎧</span><span>DIGIY AUDIO<span class="sub">Thomas fr-FR préféré</span></span></a><nav class="nav"><a class="main" href="https://digiylyfe.com/">↩️ <span class="txt">Site</span></a><a href="https://digiy-hub.digiylyfe.com/">🧭 <span class="txt">HUB</span></a><a href="https://tarifs.digiylyfe.com/">📦 <span class="txt">Tarifs</span></a><a href="https://wa.me/221771342889?text=Bonjour%20DIGIY%2C%20je%20viens%20du%20module%20DIGIY%20AUDIO%20public." target="_blank" rel="noopener">💬 <span class="txt">WhatsApp</span></a></nav></div></header>
 
   <main class="wrap">
     <section class="hero">
       <div class="badge">🦅 Public · offert pour commencer</div>
       <h1>Écouter ses textes simplement.</h1>
-      <p class="lead">Tu colles un texte, un article ou une note. DIGIY le garde dans ton navigateur. Choisis la meilleure voix disponible sur ton téléphone, puis DIGIY garde ce choix pour les prochaines lectures.</p>
+      <p class="lead">Tu colles un texte, un article ou une note. DIGIY le garde dans ton navigateur. La voix préférée est maintenant Thomas fr-FR quand elle est disponible, puis DIGIY garde le choix.</p>
       <div class="actions"><button class="btn" id="playWelcome" type="button">▶️ Écouter l’explication</button><button class="btn stop" id="stopAudio" type="button">⏹ Arrêt</button><span class="state" id="audioState">Prêt à écouter.</span></div>
       <div class="progress"><span id="audioProgress"></span></div>
       <div class="settings" aria-label="Réglages de voix">
@@ -35,7 +35,7 @@
         <div class="field"><label for="rateInput">Vitesse <span id="rateLabel">84%</span></label><input id="rateInput" type="range" min="0.65" max="1.15" step="0.01" value="0.84"></div>
         <div class="field"><label for="pitchInput">Tonalité <span id="pitchLabel">102%</span></label><input id="pitchInput" type="range" min="0.85" max="1.18" step="0.01" value="1.02"></div>
         <button class="btn soft" id="testVoice" type="button">🗣️ Tester</button>
-        <p class="hint" id="voiceHint">Safari donne souvent de meilleures voix sur iPhone. Chrome peut bloquer ou proposer une voix moins agréable selon l’appareil.</p>
+        <p class="hint" id="voiceHint">Thomas fr-FR est prioritaire quand il existe sur l’appareil. Safari donne souvent de meilleures voix sur iPhone.</p>
       </div>
     </section>
 
@@ -50,7 +50,7 @@
   (function(){
     'use strict';
     var STORAGE_KEY='digiyAudioArticlesVoiceChoiceV1';
-    var VOICE_KEY='digiyAudioVoiceURI';
+    var VOICE_KEY='digiyAudioVoiceURIThomasV1';
     var RATE_KEY='digiyAudioRate';
     var PITCH_KEY='digiyAudioPitch';
     var WELCOME={id:'welcome',title:'Première écoute — comprendre DIGIY AUDIO',timestamp:'Toujours disponible',isWelcome:true,text:['Bienvenue dans DIGIY AUDIO.','Ici, tu peux coller un texte, un article, une note, une idée ou un message important, puis le garder pour l’écouter plus tard.','DIGIY AUDIO n’est pas seulement un bouton lecture. C’est une petite bibliothèque d’écoute.','Tu poses le texte. DIGIY le garde dans ton navigateur. Tu l’écoutes quand tu veux.','Le but est simple : transformer les textes en parole utile, sans fatigue, sans détour, avec un téléphone seulement.'].join('\n\n')};
@@ -66,10 +66,12 @@
     function cleanForVoice(text){return String(text||'').replace(/\bDIGIYLYFE\b/g,'diji i laïfe').replace(/\bDIGIY AUDIO\b/g,'diji i audio').replace(/\bDIGIY\b/g,'diji i').replace(/\bBUILD\b/g,'artisans tout corps de métiers').replace(/\bQR\b/g,'Q R').replace(/\bSMS\b/g,'S M S').replace(/\bWhatsApp\b/g,'Ouatsap').replace(/\bWave\b/g,'Ouève').replace(/0\s*%/g,'zéro pour cent').replace(/\s+/g,' ').trim()}
     function splitText(text){var clean=cleanForVoice(text);if(!clean)return[];var raw=clean.match(/[^.!?…]+[.!?…]*/g)||[clean],out=[];raw.forEach(function(sentence){sentence=sentence.trim();if(!sentence)return;if(sentence.length<=420){out.push(sentence);return}for(var i=0;i<sentence.length;i+=420){out.push(sentence.slice(i,i+420))}});return out}
     function voices(){try{return synth&&synth.getVoices?synth.getVoices():[]}catch(e){return[]}}
-    function scoreVoice(v){var name=(v.name||'').toLowerCase(),lang=(v.lang||'').toLowerCase(),score=0;if(lang.indexOf('fr-fr')===0)score+=80;else if(lang.indexOf('fr')===0)score+=55;if(/google|français|audrey|amelie|amélie|hortense|julie|thomas|paul|siri|premium|enhanced/.test(name))score+=30;if(/compact|eloquence|bad|old/.test(name))score-=20;return score}
-    function defaultVoiceURI(){var saved=localStorage.getItem(VOICE_KEY)||'';var list=voices();if(saved&&list.some(function(v){return v.voiceURI===saved}))return saved;var best=list.filter(function(v){return /^fr/i.test(v.lang||'')}).sort(function(a,b){return scoreVoice(b)-scoreVoice(a)})[0];return best?best.voiceURI:''}
+    function isThomasFR(v){return /thomas/i.test(v.name||'') && /^fr[-_]?FR/i.test(v.lang||'')}
+    function scoreVoice(v){var name=(v.name||'').toLowerCase(),lang=(v.lang||'').toLowerCase(),score=0;if(/thomas/.test(name)&&lang.indexOf('fr-fr')===0)score+=300;if(lang.indexOf('fr-fr')===0)score+=80;else if(lang.indexOf('fr')===0)score+=55;if(/google|français|audrey|amelie|amélie|hortense|julie|thomas|paul|siri|premium|enhanced/.test(name))score+=30;if(/compact|eloquence|bad|old/.test(name))score-=20;return score}
+    function preferredThomasURI(){var list=voices();var thomas=list.find(isThomasFR)||list.find(function(v){return /thomas/i.test(v.name||'')&&/^fr/i.test(v.lang||'')});return thomas?thomas.voiceURI:''}
+    function defaultVoiceURI(){var list=voices();var thomas=preferredThomasURI();if(thomas)return thomas;var saved=localStorage.getItem(VOICE_KEY)||'';if(saved&&list.some(function(v){return v.voiceURI===saved}))return saved;var best=list.filter(function(v){return /^fr/i.test(v.lang||'')}).sort(function(a,b){return scoreVoice(b)-scoreVoice(a)})[0];return best?best.voiceURI:''}
     function chosenVoice(){var uri=els.voiceSelect.value||defaultVoiceURI();return voices().find(function(v){return v.voiceURI===uri})||null}
-    function populateVoices(){var list=voices();var saved=localStorage.getItem(VOICE_KEY)||'';var selected=saved||defaultVoiceURI();els.voiceSelect.innerHTML='';if(!synth){els.voiceSelect.innerHTML='<option value="">Voix non disponible</option>';return}if(!list.length){els.voiceSelect.innerHTML='<option value="">Touchez Tester ou Lecture pour charger les voix</option>';return}var fr=list.filter(function(v){return /^fr/i.test(v.lang||'')}).sort(function(a,b){return scoreVoice(b)-scoreVoice(a)});var other=list.filter(function(v){return !/^fr/i.test(v.lang||'')});fr.concat(other).forEach(function(v){var o=document.createElement('option');o.value=v.voiceURI;o.textContent=(/^fr/i.test(v.lang||'')?'🇫🇷 ':'🌍 ')+(v.name||'Voix')+' — '+(v.lang||'langue ?');els.voiceSelect.appendChild(o)});els.voiceSelect.value=selected||els.voiceSelect.value;localStorage.setItem(VOICE_KEY,els.voiceSelect.value);els.voiceHint.textContent=fr.length+' voix françaises détectées. Choisis celle qui sonne le mieux, puis clique Tester.'}
+    function populateVoices(){var list=voices();var selected=defaultVoiceURI();els.voiceSelect.innerHTML='';if(!synth){els.voiceSelect.innerHTML='<option value="">Voix non disponible</option>';return}if(!list.length){els.voiceSelect.innerHTML='<option value="">Touchez Tester ou Lecture pour charger les voix</option>';return}var fr=list.filter(function(v){return /^fr/i.test(v.lang||'')}).sort(function(a,b){return scoreVoice(b)-scoreVoice(a)});var other=list.filter(function(v){return !/^fr/i.test(v.lang||'')});fr.concat(other).forEach(function(v){var o=document.createElement('option');o.value=v.voiceURI;o.textContent=(isThomasFR(v)?'⭐ Thomas · ':(/^fr/i.test(v.lang||'')?'🇫🇷 ':'🌍 '))+(v.name||'Voix')+' — '+(v.lang||'langue ?');els.voiceSelect.appendChild(o)});els.voiceSelect.value=selected||els.voiceSelect.value;localStorage.setItem(VOICE_KEY,els.voiceSelect.value);var selectedVoice=chosenVoice();els.voiceHint.textContent=(selectedVoice&&isThomasFR(selectedVoice)?'⭐ Thomas fr-FR est sélectionné. ':'')+fr.length+' voix françaises détectées. Clique Tester pour valider le rendu.'}
     function updateLabels(){els.rateLabel.textContent=Math.round(Number(els.rate.value)*100)+'%';els.pitchLabel.textContent=Math.round(Number(els.pitch.value)*100)+'%';localStorage.setItem(RATE_KEY,els.rate.value);localStorage.setItem(PITCH_KEY,els.pitch.value)}
     function setState(txt){els.state.textContent=txt}function setBar(n){els.bar.style.width=Math.max(0,Math.min(100,n))+'%'}
     function stop(){runId++;speaking=false;currentParts=[];currentIndex=0;clearInterval(timer);timer=null;try{synth&&synth.cancel()}catch(e){}setBar(0);setState('Prêt à écouter.');els.playWelcome.textContent='▶️ Écouter l’explication';els.playCurrent.textContent='🔊 Écouter ce texte'}
@@ -83,7 +85,7 @@
     function escapeHtml(value){return String(value||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
     function add(){var text=els.input.value.trim();if(!text){els.input.focus();return}var item={id:String(Date.now()),title:titleOf(text),timestamp:new Date().toLocaleString('fr-FR'),isWelcome:false,text:text};articles.unshift(item);selectedId=item.id;els.input.value='';saveArticles();render()}
 
-    els.playWelcome.onclick=function(){speak(WELCOME.text)};els.playCurrent.onclick=function(){speak(selected().text)};els.stop.onclick=stop;els.save.onclick=add;els.clear.onclick=function(){els.input.value='';els.input.focus()};els.testVoice.onclick=function(){speak('Bonjour frérot. Ceci est un test de voix pour DIGIY AUDIO. Si cette voix n’est pas bonne, choisis une autre voix dans la liste.')};els.voiceSelect.onchange=function(){localStorage.setItem(VOICE_KEY,els.voiceSelect.value);setState('Voix choisie. Clique sur Tester.');};els.rate.oninput=updateLabels;els.pitch.oninput=updateLabels;
+    els.playWelcome.onclick=function(){speak(WELCOME.text)};els.playCurrent.onclick=function(){speak(selected().text)};els.stop.onclick=stop;els.save.onclick=add;els.clear.onclick=function(){els.input.value='';els.input.focus()};els.testVoice.onclick=function(){speak('Bonjour frérot. Ceci est Thomas, la voix préférée pour DIGIY AUDIO. Si le rendu est bon, on garde cette voix pour écouter les textes.')};els.voiceSelect.onchange=function(){localStorage.setItem(VOICE_KEY,els.voiceSelect.value);setState('Voix choisie. Clique sur Tester.');};els.rate.oninput=updateLabels;els.pitch.oninput=updateLabels;
     window.addEventListener('beforeunload',stop);document.addEventListener('visibilitychange',function(){if(document.hidden&&speaking)stop()});
     if(synth&&synth.getVoices){try{synth.getVoices()}catch(e){}try{synth.onvoiceschanged=function(){populateVoices()}}catch(e){}}
     updateLabels();populateVoices();render();
